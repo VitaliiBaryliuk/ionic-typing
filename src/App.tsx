@@ -1,8 +1,12 @@
-import React from 'react';
-import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet } from '@ionic/react';
+import React, { useEffect, useState } from 'react';
+import { Route } from 'react-router-dom';
+import { IonApp, IonRouterOutlet, IonSpinner } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import { getCurrentUser } from './firebaseConfig'; 
+import { setUserState } from './redux/actions';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -22,16 +26,44 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import Dashboard from './pages/Dashboard';
+import { useDispatch } from 'react-redux';
 
-const App: React.FC = () => (
-  <IonApp>
+const RoutingSystem: React.FC = () => {
+  return (
     <IonReactRouter>
       <IonRouterOutlet>
-        <Route path="/home" component={Home} exact={true} />
-        <Route exact path="/" render={() => <Redirect to="/home" />} />
+        <Route exact path="/" component={Home} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+        <Route path="/dashboard" component={Dashboard} />
       </IonRouterOutlet>
     </IonReactRouter>
-  </IonApp>
-);
+  );
+}
+
+const App: React.FC = () => {
+
+    const [busy, setBusy] = useState<boolean>(true);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+      getCurrentUser().then((user: any) => {
+        if(user) {
+          dispatch(setUserState(user.email))
+          window.history.replaceState({}, '', '/dashboard');
+        } else {
+          window.history.replaceState({}, '', '/');
+        }
+        setBusy(false)
+      })
+    }, []);
+
+    return (
+      <IonApp>
+         { busy ? <IonSpinner /> : <RoutingSystem /> }
+      </IonApp>
+    )
+};
 
 export default App;

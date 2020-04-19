@@ -14,12 +14,11 @@ const Home: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Best App Ever</IonTitle>
+          <IonTitle>Hello world!</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <IonButton routerLink="/login">Login</IonButton>
-        <IonButton routerLink="/register" color="secondary">Register</IonButton>
+        <IonButton routerLink="/example">Click me</IonButton>
       </IonContent>
     </IonPage>
   );
